@@ -1,5 +1,7 @@
+/* General Styles */
 .calculator {
-    width: 300px;
+    width: 90%;
+    max-width: 400px;
     margin: 50px auto;
     padding: 20px;
     border: 1px solid #ccc;
@@ -13,8 +15,9 @@
     margin-bottom: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
+    box-sizing: border-box;
 }
-.button {
+.button, .add-course-button {
     width: 100%;
     padding: 10px;
     font-size: 18px;
@@ -23,8 +26,9 @@
     background-color: #e0e0e0;
     cursor: pointer;
     margin-bottom: 10px;
+    box-sizing: border-box;
 }
-.button:active {
+.button:active, .add-course-button:active {
     background-color: #d0d0d0;
 }
 .result {
@@ -32,12 +36,18 @@
     font-weight: bold;
     text-align: center;
 }
-.add-course-button {
-    width: calc(100% - 22px);
-    padding: 10px;
-    margin: 10px 0;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: #e0e0e0;
-    cursor: pointer;
+
+/* Responsive Design */
+@media (max-width: 600px) {
+    .calculator {
+        margin: 20px auto;
+        padding: 15px;
+    }
+    .input-field, .button, .add-course-button {
+        padding: 12px;
+        font-size: 16px;
+    }
+    .result {
+        font-size: 18px;
+    }
 }
