@@ -1,3 +1,20 @@
+function login() {
+    const username = document.getElementById('login-username').value;
+    const password = document.getElementById('login-password').value;
+    if (!username || !password) {
+        alert('Please enter your username and password');
+        return;
+    }
+
+    const userData = localStorage.getItem(username + '_' + password);
+    if (userData) {
+        loadUserData(username, password, userData);
+    } else {
+        document.getElementById('login-container').style.display = 'none';
+        document.getElementById('main-container').style.display = 'block';
+    }
+}
+
 function addCourse() {
     const courseDiv = document.createElement('div');
     courseDiv.classList.add('course');
@@ -7,6 +24,12 @@ function addCourse() {
     courseName.placeholder = 'Course Name';
     courseDiv.appendChild(courseName);
 
+    const removeButton = document.createElement('button');
+    removeButton.classList.add('remove-button');
+    removeButton.innerHTML = '&times;';
+    removeButton.onclick = () => removeCourse(courseDiv);
+    courseDiv.appendChild(removeButton);
+
     const courseCredits = document.createElement('input');
     courseCredits.classList.add('input-field');
     courseCredits.placeholder = 'Credits';
@@ -14,13 +37,27 @@ function addCourse() {
     courseCredits.min = '0';
     courseDiv.appendChild(courseCredits);
 
-    const courseGrade = document.createElement('input');
-    courseGrade.classList.add('input-field');
-    courseGrade.placeholder = 'Grade';
-    courseGrade.type = 'text';
+    const courseGrade = document.createElement('select');
+    courseGrade.classList.add('dropdown-field');
+    const grades = ['A+', 'A', 'B+', 'B', 'C+', 'C', 'D+', 'D', 'F'];
+    grades.forEach(grade => {
+        const option = document.createElement('option');
+        option.value = grade;
+        option.text = grade;
+        courseGrade.appendChild(option);
+    });
     courseDiv.appendChild(courseGrade);
 
     document.getElementById('courses').appendChild(courseDiv);
+}
+
+function removeCourse(courseDiv) {
+    courseDiv.style.transition = 'transform 0.2s, opacity 0.2s';
+    courseDiv.style.transform = 'scale(0.8)';
+    courseDiv.style.opacity = '0';
+    setTimeout(() => {
+        courseDiv.remove();
+    }, 200);
 }
 
 function calculateGPA() {
@@ -30,7 +67,7 @@ function calculateGPA() {
 
     for (let i = 0; i < courses.length; i++) {
         const courseCredits = courses[i].getElementsByTagName('input')[1].value;
-        const courseGrade = courses[i].getElementsByTagName('input')[2].value.toUpperCase();
+        const courseGrade = courses[i].getElementsByTagName('select')[0].value;
 
         const credits = parseFloat(courseCredits);
         const grade = gradeToPoint(courseGrade);
@@ -42,7 +79,14 @@ function calculateGPA() {
     }
 
     const gpa = totalPoints / totalCredits;
-    document.getElementById('result').innerText = 'Your GPA is: ' + gpa.toFixed(2);
+    document.getElementById('result').innerText = 'Your GPA is: ' + (isNaN(gpa) ? 'N/A' : gpa.toFixed(2));
+
+    // Trigger confetti
+    confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 }
+    });
 }
 
 function gradeToPoint(grade) {
@@ -61,9 +105,10 @@ function gradeToPoint(grade) {
 }
 
 function saveUserData() {
-    const username = document.getElementById('username').value;
-    if (!username) {
-        alert('Please enter your name');
+    const username = document.getElementById('login-username').value;
+    const password = document.getElementById('login-password').value;
+    if (!username || !password) {
+        alert('Please enter your username and password');
         return;
     }
 
@@ -73,7 +118,7 @@ function saveUserData() {
     for (let i = 0; i < courses.length; i++) {
         const courseName = courses[i].getElementsByTagName('input')[0].value;
         const courseCredits = courses[i].getElementsByTagName('input')[1].value;
-        const courseGrade = courses[i].getElementsByTagName('input')[2].value;
+        const courseGrade = courses[i].getElementsByTagName('select')[0].value;
 
         if (courseName && courseCredits && courseGrade) {
             userData.push({
@@ -84,22 +129,13 @@ function saveUserData() {
         }
     }
 
-    localStorage.setItem(username, JSON.stringify(userData));
+    localStorage.setItem(username + '_' + password, JSON.stringify(userData));
     alert('Data saved successfully');
 }
 
-function loadUserData() {
-    const username = document.getElementById('username').value;
-    if (!username) {
-        alert('Please enter your name');
-        return;
-    }
-
-    const userData = localStorage.getItem(username);
-    if (!userData) {
-        alert('No data found for this user');
-        return;
-    }
+function loadUserData(username, password, userData) {
+    document.getElementById('login-container').style.display = 'none';
+    document.getElementById('main-container').style.display = 'block';
 
     const courses = JSON.parse(userData);
     document.getElementById('courses').innerHTML = '';
@@ -114,6 +150,12 @@ function loadUserData() {
         courseName.value = course.name;
         courseDiv.appendChild(courseName);
 
+        const removeButton = document.createElement('button');
+        removeButton.classList.add('remove-button');
+        removeButton.innerHTML = '&times;';
+        removeButton.onclick = () => removeCourse(courseDiv);
+        courseDiv.appendChild(removeButton);
+
         const courseCredits = document.createElement('input');
         courseCredits.classList.add('input-field');
         courseCredits.placeholder = 'Credits';
@@ -122,10 +164,15 @@ function loadUserData() {
         courseCredits.value = course.credits;
         courseDiv.appendChild(courseCredits);
 
-        const courseGrade = document.createElement('input');
-        courseGrade.classList.add('input-field');
-        courseGrade.placeholder = 'Grade';
-        courseGrade.type = 'text';
+        const courseGrade = document.createElement('select');
+        courseGrade.classList.add('dropdown-field');
+        const grades = ['A+', 'A', 'B+', 'B', 'C+', 'C', 'D+', 'D', 'F'];
+        grades.forEach(grade => {
+            const option = document.createElement('option');
+            option.value = grade;
+            option.text = grade;
+            courseGrade.appendChild(option);
+        });
         courseGrade.value = course.grade;
         courseDiv.appendChild(courseGrade);
 
