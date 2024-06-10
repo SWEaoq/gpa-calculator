@@ -43,12 +43,13 @@ body {
     overflow: auto; /* Allow container to scroll */
     max-height: 90vh; /* Prevent container from exceeding viewport height */
     width: 90%; /* Use most of the screen width */
-    max-width: 1200px; /* Limit max width for readability */
+    max-width: 600px; /* Limit max width for readability */
+    box-sizing: border-box; /* Ensure padding is included in the width */
 }
 
 .input-field, .dropdown-field {
     display: block;
-    width: 80%;
+    width: 90%;
     margin: 10px auto;
     padding: 10px;
     font-size: 16px;
@@ -67,7 +68,7 @@ body {
 
 button {
     display: block;
-    width: 80%;
+    width: 90%;
     margin: 10px auto;
     padding: 10px;
     font-size: 16px;
